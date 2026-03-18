@@ -17,14 +17,27 @@ jobs:
     name: generate-github-profile-summary-cards
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
 
       - uses: vn7n24fzkq/github-profile-summary-cards@release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
           USERNAME: ${{ github.repository_owner }}
-          OUTPUT_DIR: profile-summary-card-output
+          BRANCH_NAME: main
           THEMES: default,radical,monokai,dracula,github_dark
-          SKIP_EMPTY_CARDS: true
-          TIMEZONE: Asia/Shanghai
+          UTC_OFFSET: 8
+
+      - name: Setup Git User
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Push Changes
+        run: |
+          git add .
+          git commit -m "Update profile summary cards" || true 
+          git push https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }} --force
