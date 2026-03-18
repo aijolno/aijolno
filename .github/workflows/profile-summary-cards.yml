@@ -1,0 +1,30 @@
+name: Profile Summary Cards
+
+on:
+  # 1. 每天 UTC 时间 18:00 自动运行 (北京时间凌晨 2 点)
+  schedule:
+    - cron: '0 18 * * *'
+  # 2. 允许手动点击按钮运行
+  workflow_dispatch:
+  # 3. 推送代码时也运行 (可选，方便调试)
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: generate-github-profile-summary-cards
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: vn7n24fzkq/github-profile-summary-cards@release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        with:
+          USERNAME: ${{ github.repository_owner }}
+          OUTPUT_DIR: profile-summary-card-output
+          THEMES: default,radical,monokai,dracula,github_dark
+          SKIP_EMPTY_CARDS: true
+          TIMEZONE: Asia/Shanghai
