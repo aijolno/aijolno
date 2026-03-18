@@ -1,10 +1,10 @@
 name: Profile Summary Cards
 
 on:
-  # 1. 每天 UTC 时间 18:00 自动运行 (北京时间凌晨 2 点)
+  # UTC 时间每月9号18:00（北京时间每月10号2:00）自动运行
   schedule:
-    - cron: '0 18 * * *'
-  # 2. 允许手动点击按钮运行
+    - cron: '0 18 9 * *'
+  # 允许手动点击按钮运行
   workflow_dispatch:
 
 jobs:
@@ -35,5 +35,10 @@ jobs:
       - name: Push Changes
         run: |
           git add .
-          git commit -m "Update profile summary cards" || true 
-          git push https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }} --force
+          if ! git diff --staged --quiet; then
+            echo "Changes detected, committing..."
+            git commit -m "Update profile summary cards"
+            git push https://${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
+          else
+            echo "No changes detected, skipping commit."
+          fi
