@@ -6,10 +6,6 @@ on:
     - cron: '0 18 * * *'
   # 2. 允许手动点击按钮运行
   workflow_dispatch:
-  # 3. 推送代码时也运行 (可选，方便调试)
-  push:
-    branches:
-      - main
 
 jobs:
   build:
@@ -28,7 +24,6 @@ jobs:
         with:
           USERNAME: ${{ github.repository_owner }}
           BRANCH_NAME: main
-          THEMES: default,radical,monokai,dracula,github_dark
           UTC_OFFSET: 8
 
       - name: Setup Git User
